@@ -1,0 +1,14 @@
+services:
+    spl-auth-db:
+        image: postgres:latest
+        container_name: spl-auth-db
+        restart: always
+        ports:
+            - "5432:5432"
+        networks:
+            - spl-auth
+        env_file: .env
+
+networks:
+    spl-auth:
+        driver: bridge
