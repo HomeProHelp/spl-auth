@@ -1,8 +1,7 @@
 package main
 
-import "github/LissaiDev/spl-auth/db"
+import "github/LissaiDev/spl-auth/internal/auth"
 
 func main() {
-	db := db.GetDatabaseInstance()
-	print(db.AllowGlobalUpdate)
+	auth.GetUserRepository().CreateUser("lissaidev", "lissaidev@gmail.com", "lissaidevpassword")
 }

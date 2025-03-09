@@ -11,7 +11,9 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func GetDatabaseInstance() *gorm.DB {
+var Database *gorm.DB
+
+func Connect() {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		GetEnv("DB_HOST", "localhost"),
 		GetEnv("POSTGRES_USER", "spl-auth"),
@@ -20,7 +22,8 @@ func GetDatabaseInstance() *gorm.DB {
 		GetEnv("DB_PORT", "5432"),
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+	var err error
+	Database, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 
@@ -29,7 +32,6 @@ func GetDatabaseInstance() *gorm.DB {
 	}
 
 	hermes.Log(1, "Database connection was successfull", false)
-	return db
 }
 
 func init() {
