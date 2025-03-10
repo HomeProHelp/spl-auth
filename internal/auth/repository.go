@@ -18,17 +18,17 @@ func GetUserRepository() *UserRepository {
 	return &UserRepository{}
 }
 
-func (r *UserRepository) CreateUser(name, email, password string) (User, error) {
-	hashedPwd, err := hash.HashPassword(password)
+func (r *UserRepository) CreateUser(u *User) (User, error) {
+	hashedPwd, err := hash.HashPassword(u.Password)
 	if err != nil {
-		hermes.Log(3, fmt.Sprintf("User password hashing failed: %s", password), false)
+		hermes.Log(3, fmt.Sprintf("User password hashing failed: %s", u.Password), false)
 		return User{}, err
 	}
-	var user User = User{Identifier: uuid.New(), Name: name, Email: email, Password: hashedPwd}
+	var user User = User{ID: u.ID, Name: u.Name, Email: u.Email, Password: hashedPwd}
 	result := db.Database.Create(&user)
 
 	if result.Error != nil {
-		hermes.Log(3, fmt.Sprintf("User creation failed: {%s, %s, %s}\nError: %s", name, email, password, result.Error), false)
+		hermes.Log(3, fmt.Sprintf("User creation failed: {%s, %s, %s}\nError: %s", u.Name, u.Email, u.Password, result.Error), false)
 		return User{}, result.Error
 	}
 
@@ -36,9 +36,9 @@ func (r *UserRepository) CreateUser(name, email, password string) (User, error) 
 	return user, nil
 }
 
-func (r *UserRepository) GetUserByIdentifier(id uuid.UUID) (User, error) {
+func (r *UserRepository) GetUserByID(id uuid.UUID) (User, error) {
 	var user User
-	result := db.Database.First(&user, "identifier = ?", id)
+	result := db.Database.First(&user, id)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
