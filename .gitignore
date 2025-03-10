@@ -19,7 +19,7 @@ _obj
 _test
 vendor/
 bin/
-pkg/
+
 
 # Go workspace file
 go.work
