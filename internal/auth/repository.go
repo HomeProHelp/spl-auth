@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github/LissaiDev/spl-auth/db"
-	"github/LissaiDev/spl-auth/pkg/hash"
 	"github/LissaiDev/spl-auth/pkg/hermes"
 
 	"github.com/google/uuid"
@@ -19,7 +18,7 @@ func GetUserRepository() *UserRepository {
 }
 
 func (r *UserRepository) CreateUser(u *User) (User, error) {
-	hashedPwd, err := hash.HashPassword(u.Password)
+	hashedPwd, err := HashPassword(u.Password)
 	if err != nil {
 		hermes.Log(3, fmt.Sprintf("User password hashing failed: %s", u.Password), false)
 		return User{}, err
