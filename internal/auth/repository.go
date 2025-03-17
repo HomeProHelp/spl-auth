@@ -27,7 +27,7 @@ func (r *UserRepository) CreateUser(u *User) (User, error) {
 	result := db.Database.Create(&user)
 
 	if result.Error != nil {
-		hermes.Log(3, fmt.Sprintf("User creation failed: {%s, %s, %s}\nError: %s", u.Name, u.Email, u.Password, result.Error), false)
+		hermes.Log(3, fmt.Sprintf("User creation failed: {Name:%s, Email:%s, Password:%s}\nError: %s", u.Name, u.Email, u.Password, result.Error), false)
 		return User{}, result.Error
 	}
 

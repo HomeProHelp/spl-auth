@@ -13,7 +13,7 @@ func main() {
 	user, err := repo.CreateUser(&auth.User{
 		Name:     "lissaidev",
 		Email:    "lissaidev@gmail.com",
-		Password: "Abc123!@",
+		Password: "T3st_PasswOrd!",
 	})
 	fmt.Println(user.ID)
 	if err != nil {
