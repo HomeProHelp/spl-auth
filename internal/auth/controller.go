@@ -40,8 +40,13 @@ func (ctrl *UserController) createUser(ctx *gin.Context) {
 }
 
 func (ctrl *UserController) getUser(ctx *gin.Context) {
-	id := ctx.Param("id")
-	parsedUUID, err := uuid.Parse(id)
+	id, exists := ctx.Get("ID")
+	if !exists {
+		ctx.JSON(http.StatusBadRequest, &utils.Response{Code: utils.AuthenticationCodes["invalid_data"], Data: map[string]string{}})
+		return
+	}
+
+	parsedUUID, err := uuid.Parse(id.(string))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, &utils.Response{Code: utils.AuthenticationCodes["invalid_data"], Data: map[string]string{}})
 		return

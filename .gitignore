@@ -26,6 +26,8 @@ go.work
 
 # Dependencies
 .env
+.env.release
+.env.prod
 docker-compose.override.yml
 
 # Dependency directories (remove the comment below to include it)

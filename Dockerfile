@@ -27,7 +27,7 @@ WORKDIR /root/
 
 # Copiando o binário compilado do estágio de build
 COPY --from=builder /spl-auth .
-COPY --from=builder /app/.env .
+COPY --from=builder /app/.env.release .env
 
 # Expondo a porta
 EXPOSE 8080

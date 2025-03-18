@@ -9,7 +9,7 @@ services:
             - "8080:8080"
         networks:
             - spl-auth
-        env_file: .env
+        env_file: .env.release
         depends_on:
             - spl-auth-db
 
@@ -21,7 +21,7 @@ services:
             - "5432:5432"
         networks:
             - spl-auth
-        env_file: .env
+        env_file: .env.release
 
 networks:
     spl-auth:
