@@ -1,8 +1,7 @@
 package auth
 
 import (
-	"fmt"
-	"github/LissaiDev/spl-auth/pkg/hermes"
+	"github/LissaiDev/spl-auth/utils"
 
 	"github.com/google/uuid"
 )
@@ -17,25 +16,15 @@ func NewUserService(r *UserRepository) *UserService {
 	}
 }
 
-func (s *UserService) GetUser(id uuid.UUID) (User, error) {
-	user, err := s.r.GetUserByID(id)
-	if err != nil {
-		return User{}, err
-	}
-	return user, nil
+func (s *UserService) GetUser(id uuid.UUID) (User, string) {
+	return s.r.GetUserByID(id)
 }
 
-func (s *UserService) CreateUser(user *User) (User, error) {
+func (s *UserService) CreateUser(user *User) (User, string) {
 	hashedPwd, err := HashPassword(user.Password)
 	if err != nil {
-		hermes.Log(3, fmt.Sprintf("User password hashing failed: %s", user.Password), false)
-		return User{}, err
+		return User{}, utils.AuthenticationCodes["internal_server_error"]
 	}
 	*user = User{Name: user.Name, Email: user.Email, Password: hashedPwd}
-	u, error := s.r.CreateUser(user)
-	if error != nil {
-		hermes.Log(1, fmt.Sprintf("[SERVICE]: Error occured %s", error), false)
-		return User{}, error
-	}
-	return u, nil
+	return s.r.CreateUser(user)
 }

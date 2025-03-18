@@ -2,9 +2,8 @@ package auth
 
 import (
 	"errors"
-	"fmt"
 	"github/LissaiDev/spl-auth/db"
-	"github/LissaiDev/spl-auth/pkg/hermes"
+	"github/LissaiDev/spl-auth/utils"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -17,32 +16,33 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{}
 }
 
-func (r *UserRepository) CreateUser(user *User) (User, error) {
+func (r *UserRepository) CreateUser(user *User) (User, string) {
 	result := db.Database.Create(&user)
 
 	if result.Error != nil {
-		hermes.Log(3, fmt.Sprintf("User creation failed: {Name:%s, Email:%s, Password:%s}\nError: %s", user.Name, user.Email, user.Password, result.Error), false)
-		return User{}, result.Error
+		if errors.Is(result.Error, gorm.ErrDuplicatedKey) {
+			return User{}, utils.AuthenticationCodes["email_already_exists"]
+		}
+		if errors.Is(result.Error, gorm.ErrInvalidData) {
+			return User{}, utils.AuthenticationCodes["invalid_data"]
+		}
+		return User{}, utils.AuthenticationCodes["internal_server_error"]
 	}
 
-	hermes.Log(1, fmt.Sprintf("User created successfully: %+v", user), false)
-	return *user, nil
+	return *user, utils.AuthenticationCodes["success"]
 }
 
-func (r *UserRepository) GetUserByID(id uuid.UUID) (User, error) {
+func (r *UserRepository) GetUserByID(id uuid.UUID) (User, string) {
 	var user User
 	result := db.Database.First(&user, id)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			hermes.Log(1, fmt.Sprintf("User with ID: %s Not Found", id), false)
-			return User{}, result.Error
+			return User{}, utils.AuthenticationCodes["user_not_found"]
 		}
-		hermes.Log(3, "Error retrieving user", true)
-		return User{}, result.Error
+		return User{}, utils.AuthenticationCodes["internal_server_error"]
 	}
-	hermes.Log(1, fmt.Sprintf("User with ID: %s Sucessfully retrieved", id), false)
-	return user, nil
+	return user, utils.AuthenticationCodes["success"]
 }
 
 func init() {
