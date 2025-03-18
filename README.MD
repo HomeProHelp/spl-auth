@@ -63,9 +63,9 @@ docker-compose up
 
 ## Endpoints da API
 
-- `POST /api/auth` - Registro de novo usuário
-- `POST /api/auth/login` - Login de usuário
-- `POST /api/auth/:id` - Obter dados do usuário
+- `POST /auth` - Registro de novo usuário
+- `POST /auth/login` - Login de usuário
+- `GET /auth` - Obter dados do usuário
 
 ## Estrutura do Projeto
 
