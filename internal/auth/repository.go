@@ -13,26 +13,20 @@ import (
 type UserRepository struct {
 }
 
-func GetUserRepository() *UserRepository {
+func NewUserRepository() *UserRepository {
 	return &UserRepository{}
 }
 
-func (r *UserRepository) CreateUser(u *User) (User, error) {
-	hashedPwd, err := HashPassword(u.Password)
-	if err != nil {
-		hermes.Log(3, fmt.Sprintf("User password hashing failed: %s", u.Password), false)
-		return User{}, err
-	}
-	var user User = User{ID: u.ID, Name: u.Name, Email: u.Email, Password: hashedPwd}
+func (r *UserRepository) CreateUser(user *User) (User, error) {
 	result := db.Database.Create(&user)
 
 	if result.Error != nil {
-		hermes.Log(3, fmt.Sprintf("User creation failed: {Name:%s, Email:%s, Password:%s}\nError: %s", u.Name, u.Email, u.Password, result.Error), false)
+		hermes.Log(3, fmt.Sprintf("User creation failed: {Name:%s, Email:%s, Password:%s}\nError: %s", user.Name, user.Email, user.Password, result.Error), false)
 		return User{}, result.Error
 	}
 
 	hermes.Log(1, fmt.Sprintf("User created successfully: %+v", user), false)
-	return user, nil
+	return *user, nil
 }
 
 func (r *UserRepository) GetUserByID(id uuid.UUID) (User, error) {
