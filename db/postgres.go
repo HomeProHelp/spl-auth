@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 	"github/LissaiDev/spl-auth/pkg/hermes"
-	"os"
+	"github/LissaiDev/spl-auth/utils"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -15,11 +15,11 @@ var Database *gorm.DB
 
 func Connect() {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		GetEnv("DB_HOST", "localhost"),
-		GetEnv("POSTGRES_USER", "spl-auth"),
-		GetEnv("POSTGRES_PASSWORD", "spl-auth"),
-		GetEnv("POSTGRES_DB", "spl-auth"),
-		GetEnv("DB_PORT", "5432"),
+		utils.GetEnv("DB_HOST", "localhost"),
+		utils.GetEnv("POSTGRES_USER", "spl-auth"),
+		utils.GetEnv("POSTGRES_PASSWORD", "spl-auth"),
+		utils.GetEnv("POSTGRES_DB", "spl-auth"),
+		utils.GetEnv("DB_PORT", "5432"),
 	)
 
 	var err error
@@ -39,11 +39,4 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func GetEnv(key, fallback string) string {
-	if env, exists := os.LookupEnv(key); exists {
-		return env
-	}
-	return fallback
 }

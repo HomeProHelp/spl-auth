@@ -50,8 +50,8 @@ func (ctrl *UserController) getUser(ctx *gin.Context) {
 	user, code := ctrl.srv.GetUser(parsedUUID)
 	if !utils.IsSuccess(code) {
 
-		if code == utils.AuthenticationCodes["not_found"] {
-			ctx.JSON(http.StatusNotFound, &utils.Response{Code: utils.AuthenticationCodes["not_found"], Data: map[string]string{}})
+		if code == utils.AuthenticationCodes["user_not_found"] {
+			ctx.JSON(http.StatusNotFound, &utils.Response{Code: utils.AuthenticationCodes["user_not_found"], Data: map[string]string{}})
 			return
 		}
 
@@ -64,6 +64,26 @@ func (ctrl *UserController) getUser(ctx *gin.Context) {
 		Email:     user.Email,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
+	}})
+	return
+}
+
+func (ctrl *UserController) authenticateUser(ctx *gin.Context) {
+	var user utils.UserRequest
+	if err := ctx.ShouldBindJSON(&user); err != nil {
+		ctx.JSON(http.StatusBadRequest, &utils.Response{Code: utils.AuthenticationCodes["invalid_data"], Data: map[string]string{}})
+		return
+	}
+
+	token, code := ctrl.srv.AuthenticateUser(user.Email, user.Password)
+
+	if !utils.IsSuccess(code) {
+		ctx.JSON(http.StatusBadRequest, &utils.Response{Code: code, Data: map[string]string{}})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, &utils.Response{Code: utils.AuthenticationCodes["success"], Data: map[string]string{
+		"token": *token,
 	}})
 	return
 }

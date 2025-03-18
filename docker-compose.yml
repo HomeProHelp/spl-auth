@@ -1,4 +1,18 @@
 services:
+    spl-auth-server:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: spl-auth-server
+        restart: always
+        ports:
+            - "8080:8080"
+        networks:
+            - spl-auth
+        env_file: .env
+        depends_on:
+            - spl-auth-db
+
     spl-auth-db:
         image: postgres:latest
         container_name: spl-auth-db
